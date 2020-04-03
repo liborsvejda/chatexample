@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <script>
+        const HOST = window.location.protocol + "//" + window.location.hostname + ((window.location.port) ? ":" + window.location.port : "");
+        function posliZpravu() {
+            let v = document.getElementById("zprava").value;
+            document.getElementById("zprava").value = "";
+            let url = HOST+"/chat/add?msg="+v;
+            fetch(url).then(function(response) {
+                response.text().then(function(text) {
+                    //nemusim nic delat
+                });
+            });
+        }
+
+        function ukazZpravy() {
+            let url = HOST+"/chat/list";
+            fetch(url).then(function(response) {
+                response.text().then(function(text) {
+                    let obj = JSON.parse(text);
+                    let s = "";
+                    for (let msg of obj.messages.splice(-100)) {
+                        s =  s  + "<span style=\"font-size:75%; color:gray\">" + "<i>" +  msg.time + "</i>" + "</span><br><b>" + msg.text + "</b><br>";
+
+                    }
+                    document.getElementById("zpravy").innerHTML = s;
+                });
+            });
+        }
+        function poNacteni() {
+            setInterval(ukazZpravy, 1000);
+        }
+
+    </script>
+</head>
+<body onload="poNacteni()">
+
+<h1>Chat</h1>
+
+<div id="zpravy"></div>
+<input type="text" id="zprava" placeholder="Zpráva">
+<input type="button" value="Odešli" onclick="posliZpravu()">
+
+</body>
+</html>
